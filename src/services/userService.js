@@ -40,6 +40,16 @@ async login(data){
     }
 
 }
+async getUser(data){
+    try{
+        const user=await UserRepo.getuser(data);
+        return user;
+    }
+    catch(err){
+        console.log("ServiceLayerError",err)
+        throw err;
+    }
+}
 async verifyProfilePassword(data,user){
     try{
         const userr=await UserRepo.getuser(user.user);
@@ -47,8 +57,6 @@ async verifyProfilePassword(data,user){
             throw new Error("User Not Found");
         
         }
-        console.log(userr)
-        console.log(data)
         const isMatch=await this.passwordMatch(data.profilePassword,userr.profilePassword);
         console.log(isMatch)
         if(!isMatch){
@@ -69,7 +77,7 @@ createToken(user){
     return jwt.sign({user:user},config.secret, { expiresIn: "15m" })
 }
 createTokenTemp(user){
-    return jwt.sign({user:user},config.secret, { expiresIn: "3m" })
+    return jwt.sign({user:user},config.secret, { expiresIn: "1m" })
 }
 
 VerifyandGetToken(token){

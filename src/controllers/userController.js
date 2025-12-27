@@ -15,7 +15,7 @@ export const createUser=async (req,res)=>{
             data:{},
             error:err,
             success:false,
-            message:"Internal Server Error"
+            message:err.message
         });
 
         
@@ -33,8 +33,8 @@ export const login=async (req,res)=>{
             });
         }
            res.status(200).cookie("passtoken",token,{httpOnly: true,   // protects from JS access
-          sameSite: "strict",         // prevents some CSRF attacks
-          maxAge: 15 * 60 * 1000      // expires in 15 minutes
+          sameSite: "lax",         // prevents some CSRF attacks
+          maxAge: 15 * 60 * 1000      // expires in 15 minute
           }).json({token});
            
 
@@ -43,7 +43,7 @@ export const login=async (req,res)=>{
             data:{},
             error:err,
             success:false,
-            message:"Internal Server Error"
+            message:err.message
         });
 
 
@@ -55,8 +55,8 @@ export const verifyProfilePassword=async (req,res)=>{
         console.log(req.body)
         const token=await UserServices.verifyProfilePassword(req.body,req.user);
         res.status(200).cookie("tempToken",token,{httpOnly: true,             // protects from JS access
-  sameSite: "strict",         // prevents some CSRF attacks
-  maxAge: 3 * 60 * 1000      // expires in 15 minutes
+  sameSite: "lax",         // prevents some CSRF attacks
+  maxAge: 1 * 60 * 1000      // expires in 3 minutes
 }).json({token});
         
     }catch(err){
@@ -64,12 +64,31 @@ export const verifyProfilePassword=async (req,res)=>{
             data:{},
             error:err,
             success:false,
-            message:"Internal Server Error"
+            message:err.message
         });
 
 
     }
 }
+export const getUser=async (req,res)=>{
+    try{
+        const user=await UserServices.getUser(req.user.user);
+        return res.status(200).json({
+            data:user,
+            error:{},
+            success:true,
+            message:"User Fetched Successfully"
+        });
+    }catch(err){
+        return res.status(500).json({
+            data:{},
+            error:err,
+            success:false,
+            message:err.message
+        });
 
+        
+    }
+}
 
 
